@@ -392,9 +392,14 @@ def brain_tumor_analyzer_page():
         navigate_to("dashboard")
 
 
+import streamlit as st
+
 def chatbot_page():
     st.title("💬 AI Medical Chatbot")
-    st.markdown("Ask medical questions, get information, or find nearby hospitals. Remember, this chatbot provides information and is not a substitute for professional medical advice.")
+    st.markdown(
+        "Ask medical questions, get information, or find nearby hospitals. "
+        "Remember, this chatbot provides information and is not a substitute for professional medical advice."
+    )
     st.markdown("---")
 
     # Initialize chat history
@@ -404,7 +409,7 @@ def chatbot_page():
         except Exception as e:
             st.error(f"Failed to start chat session: {e}")
             st.button("⬅ Back to Dashboard", on_click=navigate_to, args=("dashboard",))
-            return # Stop rendering the rest of the page
+            return  # Stop rendering the rest of the page
 
     # Display chat messages from history
     for message in st.session_state.chat_session.history:
@@ -412,19 +417,32 @@ def chatbot_page():
             st.markdown(message.parts[0].text)
 
     # Accept user input
-    user_prompt = st.chat_input("Ask something...")
+    user_input = st.text_input("Ask something...", placeholder="Type your question here...")
 
-    if user_prompt:
+    if user_input:
+        # Build detailed prompt for medical assistant context
+        user_prompt = f"""
+You are a helpful and professional medical assistant AI. Provide clear, concise, and accurate medical information.
+Always remind users that your advice is not a substitute for professional medical diagnosis or treatment.
+Encourage users to see a healthcare professional for serious or urgent issues.
+
+Answer the following question carefully and politely:
+
+{user_input}
+"""
+
         # Add user message to chat history and display it
-        st.chat_message("user").markdown(user_prompt)
+        st.chat_message("user").markdown(user_input)
 
         # Send user message to Gemini and get response
         try:
             with st.spinner("Thinking..."):
-                 gemini_response = st.session_state.chat_session.send_message(user_prompt)
+                gemini_response = st.session_state.chat_session.send_message(user_prompt)
+
             # Display Gemini response
             with st.chat_message("assistant"):
                 st.markdown(gemini_response.text)
+
         except Exception as e:
              st.error(f"An error occurred communicating with the AI: {e}")
              # Optionally add a retry or info message to the chat history

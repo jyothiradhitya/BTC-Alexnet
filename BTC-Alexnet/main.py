@@ -313,7 +313,7 @@ def dashboard_page():
 
     st.markdown("---")
     # Add Logout button
-    if st.button("Logout", type="secondary"): # Use type for different styling potential
+    if st.button("Logout"):  # Removed invalid 'type' argument
         st.session_state.logged_in = False
         st.session_state.username = ""
         st.session_state.page = "main"
@@ -322,7 +322,7 @@ def dashboard_page():
             del st.session_state["chat_session"]
         if "messages" in st.session_state: # If using a simple list for chat history
              del st.session_state["messages"]
-        st.experimental_rerun()
+        st.rerun()
 
 
 def symptom_analyzer_page():
@@ -390,7 +390,6 @@ def brain_tumor_analyzer_page():
     st.markdown("---")
     if st.button("⬅ Back to Dashboard"):
         navigate_to("dashboard")
-
 
 import streamlit as st
 
